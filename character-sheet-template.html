@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendragon Character Sheet Template</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #202020;
+      --muted: #555;
+      --line: #8a826f;
+      --panel: #fffdfa;
+      --accent: #3d5a80;
+      --accent-2: #7c5c3b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Book Antiqua", "Palatino Linotype", Palatino, serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 320px 1fr;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    h1, h2, h3 { margin: 0 0 .5rem; }
+    h1 { font-size: 1.35rem; color: var(--accent); }
+    h2 { font-size: 1.05rem; color: var(--accent-2); border-bottom: 1px solid var(--line); padding-bottom: .25rem; }
+    p { color: var(--muted); }
+
+    input, textarea, button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: .5rem .6rem;
+      font: inherit;
+    }
+
+    textarea { min-height: 70px; resize: vertical; }
+
+    button {
+      cursor: pointer;
+      background: #ede8dc;
+      transition: .15s ease;
+    }
+    button:hover { background: #e5decf; }
+
+    .btn-row {
+      display: grid;
+      gap: .5rem;
+      grid-template-columns: 1fr 1fr;
+      margin-top: .5rem;
+    }
+
+    .sheet {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .identity {
+      display: grid;
+      gap: .75rem;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+
+    .two-col {
+      display: grid;
+      gap: .75rem;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+
+    .three-col {
+      display: grid;
+      gap: .75rem;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+
+    .stat-grid {
+      display: grid;
+      gap: .5rem;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+
+    .stat-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: .45rem;
+      background: #fff;
+    }
+
+    .stat-row label {
+      display: block;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .stat-row input { margin-top: .25rem; }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .8rem;
+      background: #fff;
+    }
+
+    .footnote { font-size: .85rem; color: var(--muted); }
+
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: 1fr; }
+      .identity, .stat-grid, .three-col, .two-col { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .identity, .stat-grid, .three-col, .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .controls { display: none; }
+      .layout { display: block; max-width: 100%; }
+      .panel { box-shadow: none; }
+      .section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <aside class="panel controls">
+      <h1>Character Sheet Controls</h1>
+      <p>All data stays in this file via browser localStorage.</p>
+
+      <label>Character Name <input data-bind="character.name" placeholder="Sir ..." /></label>
+      <label>Player <input data-bind="character.player" /></label>
+      <label>Homeland / Culture <input data-bind="character.homeland" /></label>
+      <label>Current Year <input data-bind="character.year" placeholder="e.g., 518" /></label>
+
+      <div class="btn-row">
+        <button id="exportBtn">Export JSON</button>
+        <button id="importBtn">Import JSON</button>
+      </div>
+      <div class="btn-row">
+        <button id="printBtn">Print</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+
+      <input id="importFile" type="file" accept="application/json" hidden />
+      <p class="footnote">Tip: duplicate this file per character for long-term archival snapshots.</p>
+    </aside>
+
+    <section class="panel sheet" id="sheet">
+      <section class="section">
+        <h2>Identity</h2>
+        <div class="identity">
+          <label>Name <input data-bind="character.name" /></label>
+          <label>Player <input data-bind="character.player" /></label>
+          <label>Father's Name <input data-bind="character.father" /></label>
+          <label>Liege Lord <input data-bind="character.liege" /></label>
+          <label>Homeland / Culture <input data-bind="character.homeland" /></label>
+          <label>Religion <input data-bind="character.religion" /></label>
+          <label>Current Age <input data-bind="character.age" /></label>
+          <label>Current Year <input data-bind="character.year" /></label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Derived Stats</h2>
+        <div class="three-col">
+          <label>Damage <input data-bind="derived.damage" /></label>
+          <label>Healing Rate <input data-bind="derived.healing" /></label>
+          <label>Move Rate <input data-bind="derived.move" /></label>
+          <label>Total Hit Points <input data-bind="derived.hp" /></label>
+          <label>Unconscious at <input data-bind="derived.unconscious" /></label>
+          <label>Major Wound at <input data-bind="derived.majorWound" /></label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Attributes</h2>
+        <div class="stat-grid" id="attributes"></div>
+      </section>
+
+      <section class="section">
+        <h2>Traits (Chivalric / Personality)</h2>
+        <div class="stat-grid" id="traits"></div>
+      </section>
+
+      <section class="section">
+        <h2>Passions</h2>
+        <div class="stat-grid" id="passions"></div>
+      </section>
+
+      <section class="section">
+        <h2>Skills</h2>
+        <textarea data-bind="skills.freeform" placeholder="List key combat and non-combat skills as lines, e.g.\nSword 15\nAwareness 10\nCourtesy 8"></textarea>
+      </section>
+
+      <section class="section two-col">
+        <div>
+          <h2>Equipment & Armor</h2>
+          <textarea data-bind="equipment.notes" placeholder="Weapons, armor values, horse, heraldry items..."></textarea>
+        </div>
+        <div>
+          <h2>Glory / Wealth / Holdings</h2>
+          <textarea data-bind="status.notes" placeholder="Annual glory, current wealth, manor details, obligations..."></textarea>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Family & Winter Phase Notes</h2>
+        <textarea data-bind="family.notes" placeholder="Spouse, children, notable kin, annual events, aging, survivals..."></textarea>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'pendragon-character-sheet-v1';
+
+    const defaults = {
+      character: { name: '', player: '', father: '', liege: '', homeland: '', religion: '', age: '', year: '' },
+      derived: { damage: '', healing: '', move: '', hp: '', unconscious: '', majorWound: '' },
+      attributes: {
+        siz: '', dex: '', str: '', con: '', app: '', int: '', pow: '', cha: ''
+      },
+      traits: {
+        chaste: '', energetic: '', forgiving: '', generous: '', honest: '', just: '', merciful: '', modest: '', pious: '', prudent: '', temperate: '', trusting: '', valorous: ''
+      },
+      passions: {
+        loyalty: '', loveFamily: '', hospitality: '', honor: '', hate: '', love: '', fear: '', devotion: ''
+      },
+      skills: { freeform: '' },
+      equipment: { notes: '' },
+      status: { notes: '' },
+      family: { notes: '' }
+    };
+
+    let state = structuredClone(defaults);
+
+    const attributeFields = [
+      ['SIZ', 'siz'], ['DEX', 'dex'], ['STR', 'str'], ['CON', 'con'],
+      ['APP', 'app'], ['INT', 'int'], ['POW', 'pow'], ['CHA', 'cha']
+    ];
+
+    const traitFields = [
+      ['Chaste / Lustful', 'chaste'], ['Energetic / Lazy', 'energetic'], ['Forgiving / Vengeful', 'forgiving'],
+      ['Generous / Selfish', 'generous'], ['Honest / Deceitful', 'honest'], ['Just / Arbitrary', 'just'],
+      ['Merciful / Cruel', 'merciful'], ['Modest / Proud', 'modest'], ['Pious / Worldly', 'pious'],
+      ['Prudent / Reckless', 'prudent'], ['Temperate / Indulgent', 'temperate'], ['Trusting / Suspicious', 'trusting'],
+      ['Valorous / Cowardly', 'valorous']
+    ];
+
+    const passionFields = [
+      ['Loyalty (Lord)', 'loyalty'], ['Love (Family)', 'loveFamily'], ['Hospitality', 'hospitality'],
+      ['Honor', 'honor'], ['Hate', 'hate'], ['Love', 'love'], ['Fear', 'fear'], ['Religious Devotion', 'devotion']
+    ];
+
+    function createStatRows(containerId, group, fields) {
+      const container = document.getElementById(containerId);
+      fields.forEach(([label, key]) => {
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.innerHTML = `<label>${label}</label><input data-bind="${group}.${key}" />`;
+        container.appendChild(row);
+      });
+    }
+
+    function setByPath(obj, path, value) {
+      const parts = path.split('.');
+      let ref = obj;
+      for (let i = 0; i < parts.length - 1; i++) {
+        ref = ref[parts[i]];
+      }
+      ref[parts[parts.length - 1]] = value;
+    }
+
+    function getByPath(obj, path) {
+      return path.split('.').reduce((acc, key) => acc?.[key], obj);
+    }
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function load() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        state = mergeDeep(structuredClone(defaults), parsed);
+      } catch {
+        state = structuredClone(defaults);
+      }
+    }
+
+    function mergeDeep(target, source) {
+      if (typeof source !== 'object' || source === null) return target;
+      for (const key of Object.keys(source)) {
+        if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+          target[key] = mergeDeep(target[key] || {}, source[key]);
+        } else {
+          target[key] = source[key];
+        }
+      }
+      return target;
+    }
+
+    function bindInputs() {
+      document.querySelectorAll('[data-bind]').forEach((input) => {
+        const path = input.dataset.bind;
+        input.value = getByPath(state, path) ?? '';
+
+        input.addEventListener('input', () => {
+          setByPath(state, path, input.value);
+          syncMirrorFields(path, input.value, input);
+          save();
+        });
+      });
+    }
+
+    function syncMirrorFields(path, value, sourceInput) {
+      document.querySelectorAll(`[data-bind="${path}"]`).forEach((input) => {
+        if (input !== sourceInput) input.value = value;
+      });
+    }
+
+    function exportJson() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${state.character.name || 'pendragon-character'}-sheet.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function importJson(file) {
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        state = mergeDeep(structuredClone(defaults), parsed);
+        save();
+        document.querySelectorAll('[data-bind]').forEach((input) => {
+          input.value = getByPath(state, input.dataset.bind) ?? '';
+        });
+      } catch {
+        alert('Invalid JSON file.');
+      }
+    }
+
+    createStatRows('attributes', 'attributes', attributeFields);
+    createStatRows('traits', 'traits', traitFields);
+    createStatRows('passions', 'passions', passionFields);
+
+    load();
+    bindInputs();
+
+    document.getElementById('exportBtn').addEventListener('click', exportJson);
+    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (!confirm('Reset the character sheet and clear local data?')) return;
+      state = structuredClone(defaults);
+      localStorage.removeItem(STORAGE_KEY);
+      document.querySelectorAll('[data-bind]').forEach((input) => { input.value = ''; });
+    });
+    document.getElementById('importFile').addEventListener('change', async (event) => {
+      await importJson(event.target.files?.[0]);
+      event.target.value = '';
+    });
+  </script>
+</body>
+</html>
