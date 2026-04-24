@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pendragon Rule Cheat Sheet Template</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #191d26;
+      --panel-2: #222837;
+      --text: #e8ecf4;
+      --muted: #aeb8cb;
+      --accent: #7fc8f8;
+      --accent-2: #b9fbc0;
+      --border: #384258;
+      --danger: #ff8c8c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #0d1016 0%, #131824 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 320px 1fr;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 .5rem;
+      line-height: 1.2;
+    }
+
+    h1 { font-size: 1.25rem; }
+    h2 { font-size: 1.05rem; color: var(--accent); }
+    h3 { font-size: .95rem; color: var(--accent-2); }
+
+    p, li { color: var(--muted); }
+
+    .toolbar {
+      display: grid;
+      gap: .6rem;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: .6rem .7rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea { min-height: 80px; resize: vertical; }
+
+    button {
+      cursor: pointer;
+      background: #223048;
+      border-color: #405070;
+      transition: .2s ease;
+    }
+
+    button:hover { background: #2a3a57; }
+
+    .btn-row {
+      display: grid;
+      gap: .5rem;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .danger { background: #4a2525; border-color: #704040; color: #ffd4d4; }
+    .danger:hover { background: #5a2b2b; }
+
+    .sheet-header {
+      display: grid;
+      gap: .8rem;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 1rem;
+    }
+
+    .chip {
+      display: inline-block;
+      font-size: .75rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .2rem .5rem;
+      border-radius: 999px;
+      margin-right: .3rem;
+      margin-top: .3rem;
+    }
+
+    .columns {
+      display: grid;
+      gap: .8rem;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+
+    .rule-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .8rem;
+      background: #1a1f2c;
+    }
+
+    .rule-card p { margin: .4rem 0; }
+
+    .rule-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      margin-bottom: .4rem;
+    }
+
+    .tag {
+      padding: .15rem .45rem;
+      border-radius: 999px;
+      font-size: .7rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: #252c3d;
+    }
+
+    .empty {
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 950px) {
+      .container { grid-template-columns: 1fr; }
+      .sheet-header, .columns { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; color: #000; }
+      .container { display: block; max-width: 100%; }
+      .toolbar-wrap { display: none; }
+      .panel { border: 1px solid #ddd; box-shadow: none; }
+      .rule-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="panel toolbar-wrap">
+      <h1>Rule Cheat Sheet Builder</h1>
+      <p>Build custom quick-reference cards and print/export from one self-contained file.</p>
+
+      <div class="toolbar">
+        <label>
+          Sheet Title
+          <input id="sheetTitle" placeholder="e.g., Pendragon 6e - Combat & Common Actions" />
+        </label>
+
+        <label>
+          Campaign / Table
+          <input id="sheetSubtitle" placeholder="e.g., Winter Court 513-518" />
+        </label>
+
+        <label>
+          Global Notes
+          <textarea id="sheetNotes" placeholder="House rules, reminders, assumptions..."></textarea>
+        </label>
+
+        <hr style="border-color: var(--border); width: 100%;">
+
+        <h2>Add Rule Card</h2>
+
+        <label>
+          Rule Name
+          <input id="ruleName" placeholder="e.g., Opposed Trait Roll" />
+        </label>
+
+        <label>
+          Category
+          <select id="ruleCategory">
+            <option>Core</option>
+            <option>Combat</option>
+            <option>Passions</option>
+            <option>Traits</option>
+            <option>Travel</option>
+            <option>Winter Phase</option>
+            <option>Magic</option>
+            <option>Custom</option>
+          </select>
+        </label>
+
+        <label>
+          Trigger / When Used
+          <input id="ruleTrigger" placeholder="e.g., Two knights contest the same objective" />
+        </label>
+
+        <label>
+          Resolution Steps
+          <textarea id="ruleSteps" placeholder="1) Roll d20 under skill\n2) Critical beats normal\n3) Compare success levels..."></textarea>
+        </label>
+
+        <label>
+          Outcome Notes
+          <textarea id="ruleOutcome" placeholder="Tie handling, special cases, fumbles, etc."></textarea>
+        </label>
+
+        <label>
+          Tags (comma separated)
+          <input id="ruleTags" placeholder="rolls, opposed, contested" />
+        </label>
+
+        <div class="btn-row">
+          <button id="addRuleBtn">Add / Update Rule</button>
+          <button id="clearFormBtn" type="button">Clear Form</button>
+        </div>
+
+        <div class="btn-row">
+          <button id="exportBtn" type="button">Export JSON</button>
+          <button id="importBtn" type="button">Import JSON</button>
+        </div>
+
+        <div class="btn-row">
+          <button id="printBtn" type="button">Print</button>
+          <button id="resetBtn" class="danger" type="button">Reset All</button>
+        </div>
+
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="sheet-header">
+        <div>
+          <h1 id="previewTitle">Rule Cheat Sheet</h1>
+          <p id="previewSubtitle">System / campaign details</p>
+        </div>
+        <div>
+          <h3>Global Notes</h3>
+          <p id="previewNotes">Add global assumptions and house rules from the left panel.</p>
+        </div>
+      </div>
+
+      <div id="rulesContainer" class="columns"></div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'pendragon-rule-cheat-sheet-v1';
+
+    const el = {
+      sheetTitle: document.getElementById('sheetTitle'),
+      sheetSubtitle: document.getElementById('sheetSubtitle'),
+      sheetNotes: document.getElementById('sheetNotes'),
+      ruleName: document.getElementById('ruleName'),
+      ruleCategory: document.getElementById('ruleCategory'),
+      ruleTrigger: document.getElementById('ruleTrigger'),
+      ruleSteps: document.getElementById('ruleSteps'),
+      ruleOutcome: document.getElementById('ruleOutcome'),
+      ruleTags: document.getElementById('ruleTags'),
+      addRuleBtn: document.getElementById('addRuleBtn'),
+      clearFormBtn: document.getElementById('clearFormBtn'),
+      exportBtn: document.getElementById('exportBtn'),
+      importBtn: document.getElementById('importBtn'),
+      importFile: document.getElementById('importFile'),
+      printBtn: document.getElementById('printBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      previewTitle: document.getElementById('previewTitle'),
+      previewSubtitle: document.getElementById('previewSubtitle'),
+      previewNotes: document.getElementById('previewNotes'),
+      rulesContainer: document.getElementById('rulesContainer'),
+    };
+
+    let state = {
+      title: '',
+      subtitle: '',
+      notes: '',
+      rules: [],
+      editingIndex: null
+    };
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function load() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        state = {
+          title: parsed.title || '',
+          subtitle: parsed.subtitle || '',
+          notes: parsed.notes || '',
+          rules: Array.isArray(parsed.rules) ? parsed.rules : [],
+          editingIndex: null
+        };
+      } catch {
+        // Ignore bad persisted data.
+      }
+    }
+
+    function syncInputsFromState() {
+      el.sheetTitle.value = state.title;
+      el.sheetSubtitle.value = state.subtitle;
+      el.sheetNotes.value = state.notes;
+    }
+
+    function syncStateFromSheetInputs() {
+      state.title = el.sheetTitle.value.trim();
+      state.subtitle = el.sheetSubtitle.value.trim();
+      state.notes = el.sheetNotes.value.trim();
+      save();
+      render();
+    }
+
+    function clearForm() {
+      el.ruleName.value = '';
+      el.ruleCategory.value = 'Core';
+      el.ruleTrigger.value = '';
+      el.ruleSteps.value = '';
+      el.ruleOutcome.value = '';
+      el.ruleTags.value = '';
+      state.editingIndex = null;
+      el.addRuleBtn.textContent = 'Add Rule';
+    }
+
+    function collectRuleFromForm() {
+      const name = el.ruleName.value.trim();
+      if (!name) {
+        alert('Rule name is required.');
+        return null;
+      }
+
+      return {
+        name,
+        category: el.ruleCategory.value,
+        trigger: el.ruleTrigger.value.trim(),
+        steps: el.ruleSteps.value.trim(),
+        outcome: el.ruleOutcome.value.trim(),
+        tags: el.ruleTags.value
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean)
+      };
+    }
+
+    function startEdit(index) {
+      const rule = state.rules[index];
+      if (!rule) return;
+
+      state.editingIndex = index;
+      el.ruleName.value = rule.name || '';
+      el.ruleCategory.value = rule.category || 'Core';
+      el.ruleTrigger.value = rule.trigger || '';
+      el.ruleSteps.value = rule.steps || '';
+      el.ruleOutcome.value = rule.outcome || '';
+      el.ruleTags.value = (rule.tags || []).join(', ');
+      el.addRuleBtn.textContent = 'Update Rule';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function removeRule(index) {
+      state.rules.splice(index, 1);
+      save();
+      render();
+    }
+
+    function render() {
+      el.previewTitle.textContent = state.title || 'Rule Cheat Sheet';
+      el.previewSubtitle.textContent = state.subtitle || 'System / campaign details';
+      el.previewNotes.textContent = state.notes || 'Add global assumptions and house rules from the left panel.';
+
+      if (!state.rules.length) {
+        el.rulesContainer.innerHTML = '<div class="empty">No rules added yet. Use the form to add your first cheat-sheet card.</div>';
+        return;
+      }
+
+      el.rulesContainer.innerHTML = '';
+      state.rules.forEach((rule, index) => {
+        const card = document.createElement('article');
+        card.className = 'rule-card';
+
+        const tagHtml = (rule.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+        card.innerHTML = `
+          <h2>${escapeHtml(rule.name)}</h2>
+          <div class="rule-meta">
+            <span class="chip">${escapeHtml(rule.category || 'Uncategorized')}</span>
+            ${tagHtml}
+          </div>
+          <p><strong>When:</strong> ${escapeHtml(rule.trigger || '—')}</p>
+          <p><strong>Steps:</strong><br>${escapeHtml(rule.steps || '—').replace(/\n/g, '<br>')}</p>
+          <p><strong>Outcome:</strong><br>${escapeHtml(rule.outcome || '—').replace(/\n/g, '<br>')}</p>
+          <div class="btn-row" style="margin-top:.8rem;">
+            <button data-action="edit" data-index="${index}">Edit</button>
+            <button class="danger" data-action="delete" data-index="${index}">Delete</button>
+          </div>
+        `;
+
+        el.rulesContainer.appendChild(card);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    el.sheetTitle.addEventListener('input', syncStateFromSheetInputs);
+    el.sheetSubtitle.addEventListener('input', syncStateFromSheetInputs);
+    el.sheetNotes.addEventListener('input', syncStateFromSheetInputs);
+
+    el.addRuleBtn.addEventListener('click', () => {
+      const rule = collectRuleFromForm();
+      if (!rule) return;
+
+      if (state.editingIndex === null) {
+        state.rules.push(rule);
+      } else {
+        state.rules[state.editingIndex] = rule;
+      }
+
+      save();
+      clearForm();
+      render();
+    });
+
+    el.clearFormBtn.addEventListener('click', clearForm);
+
+    el.rulesContainer.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const index = Number(target.dataset.index);
+      if (Number.isNaN(index)) return;
+
+      if (target.dataset.action === 'edit') startEdit(index);
+      if (target.dataset.action === 'delete' && confirm('Delete this rule card?')) removeRule(index);
+    });
+
+    el.exportBtn.addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'pendragon-rule-cheat-sheet.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    el.importBtn.addEventListener('click', () => el.importFile.click());
+
+    el.importFile.addEventListener('change', async () => {
+      const file = el.importFile.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        state = {
+          title: parsed.title || '',
+          subtitle: parsed.subtitle || '',
+          notes: parsed.notes || '',
+          rules: Array.isArray(parsed.rules) ? parsed.rules : [],
+          editingIndex: null
+        };
+        save();
+        syncInputsFromState();
+        clearForm();
+        render();
+      } catch {
+        alert('Invalid JSON file.');
+      } finally {
+        el.importFile.value = '';
+      }
+    });
+
+    el.printBtn.addEventListener('click', () => window.print());
+
+    el.resetBtn.addEventListener('click', () => {
+      if (!confirm('Reset sheet and remove all local data?')) return;
+      state = { title: '', subtitle: '', notes: '', rules: [], editingIndex: null };
+      localStorage.removeItem(STORAGE_KEY);
+      syncInputsFromState();
+      clearForm();
+      render();
+    });
+
+    load();
+    syncInputsFromState();
+    clearForm();
+    render();
+  </script>
+</body>
+</html>
